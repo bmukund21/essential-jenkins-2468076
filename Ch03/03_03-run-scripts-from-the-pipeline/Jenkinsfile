@@ -14,26 +14,20 @@ pipeline {
         cron '@midnight'
     }
     stages {
+        stage('Debug - List Files') {  // This stage will list the files in the workspace root
+            steps {
+                sh('pwd')  // Print the current working directory (should be the root of the workspace)
+                sh('ls -la')  // List all files in the root directory of the workspace
+            }
+        }
         stage('Make executable') {
             steps {
-                sh('chmod +x ./fibonacci.sh')  // Make the script in the root directory executable
+                sh('chmod +x ./fibonacci.sh')  // Make the script executable
             }
         }
-        stage('Relative path') {
+        stage('Run Fibonacci Script') {
             steps {
-                sh("./fibonacci.sh ${env.NUMBER}")  // Use the relative path from the root
-            }
-        }
-        stage('Full path') {
-            steps {
-                sh("${env.WORKSPACE}/fibonacci.sh ${env.NUMBER}")  // Use the full path to the script in the root directory
-            }
-        }
-        stage('Change directory') {
-            steps {
-                dir("${env.WORKSPACE}") {  // Change to the root directory (which is the workspace root)
-                    sh("./fibonacci.sh ${env.NUMBER}")
-                }
+                sh("./fibonacci.sh ${env.NUMBER}")  // Run the script with the selected parameter
             }
         }
     }
