@@ -3,7 +3,7 @@ pipeline {
     parameters {
         choice(name: 'NUMBER',
             choices: [10,20,30,40,50,60,70,80,90],
-            description: 'Select the value for F(n) for the Fibonacci sequence.')
+            description: 'Select the value for F(n) for the Fibonnai sequence.')
     }
     options {
         buildDiscarder(logRotator(daysToKeepStr: '10', numToKeepStr: '10'))
@@ -14,11 +14,6 @@ pipeline {
         cron '@midnight'
     }
     stages {
-        stage('Checkout') { // Make sure the repository is being checked out
-            steps {
-                checkout scm
-            }
-        }
         stage('Debug - List Files') {  // List the files in the root workspace
             steps {
                 sh('pwd')  // Print current working directory
@@ -27,12 +22,24 @@ pipeline {
         }
         stage('Make executable') {
             steps {
-                sh('chmod +x ./fibonacci.sh')  // Make the script executable
+                sh('chmod +x ./scripts/fibonacci.sh')
             }
         }
-        stage('Run Fibonacci Script') {
+        stage('Relative path') {
             steps {
-                sh("./fibonacci.sh ${env.NUMBER}")  // Run the script
+                sh("./scripts/fibonacci.sh ${env.NUMBER}")
+            }
+        }
+        stage('Full path') {
+            steps {
+                sh("${env.WORKSPACE}/scripts/fibonacci.sh ${env.NUMBER}")
+            }
+        }
+        stage('Change directory') {
+            steps {
+                dir("${env.WORKSPACE}/scripts"){
+                    sh("./fibonacci.sh ${env.NUMBER}")
+                }
             }
         }
     }
