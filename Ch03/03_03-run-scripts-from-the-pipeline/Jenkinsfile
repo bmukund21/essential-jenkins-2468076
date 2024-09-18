@@ -14,10 +14,15 @@ pipeline {
         cron '@midnight'
     }
     stages {
-        stage('Debug - List Files') {  // This stage will list the files in the workspace root
+        stage('Checkout') { // Make sure the repository is being checked out
             steps {
-                sh('pwd')  // Print the current working directory (should be the root of the workspace)
-                sh('ls -la')  // List all files in the root directory of the workspace
+                checkout scm
+            }
+        }
+        stage('Debug - List Files') {  // List the files in the root workspace
+            steps {
+                sh('pwd')  // Print current working directory
+                sh('ls -la')  // List all files in the root directory
             }
         }
         stage('Make executable') {
@@ -27,7 +32,7 @@ pipeline {
         }
         stage('Run Fibonacci Script') {
             steps {
-                sh("./fibonacci.sh ${env.NUMBER}")  // Run the script with the selected parameter
+                sh("./fibonacci.sh ${env.NUMBER}")  // Run the script
             }
         }
     }
