@@ -14,26 +14,24 @@ pipeline {
         cron '@midnight'
     }
     stages {
+        stage('Debug') {
+            steps {
+                echo "Current directory:"
+                sh('pwd') // Check current directory
+                echo "Workspace contents:"
+                sh('ls -l') // List contents in the workspace
+                echo "Scripts folder contents:"
+                sh('ls -l ./scripts') // List the contents of the scripts folder
+            }
+        }
         stage('Make executable') {
             steps {
                 sh('chmod +x ./scripts/fibonacci.sh')
             }
         }
-        stage('Relative path') {
+        stage('Run Fibonacci Script') {
             steps {
                 sh("./scripts/fibonacci.sh ${env.NUMBER}")
-            }
-        }
-        stage('Full path') {
-            steps {
-                sh("${env.WORKSPACE}/scripts/fibonacci.sh ${env.NUMBER}")
-            }
-        }
-        stage('Change directory') {
-            steps {
-                dir("${env.WORKSPACE}/scripts"){
-                    sh("./fibonacci.sh ${env.NUMBER}")
-                }
             }
         }
     }
